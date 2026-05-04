@@ -871,8 +871,56 @@ const MATCHES = [
   {id:601,date:'2026-07-19', utcH:19, utcM:0,  home:'Gan. SF1',  away:'Gan. SF2',  group:null, phase:'final', stadium:'MetLife Stadium, Nueva Jersey'},
 ];
 
-// Results storage
-let RESULTS = JSON.parse(localStorage.getItem('wc2026_results') || '{}');
+// Results storage — sincronizado con Google Sheets
+let RESULTS = {};
+let _syncTimeout = null;
+
+// Cargar resultados desde Sheets al iniciar
+async function cargarResultadosCloud() {
+  const url = getScriptURL();
+  if (!url) {
+    // Sin URL, usar localStorage como fallback
+    RESULTS = JSON.parse(localStorage.getItem('wc2026_results') || '{}');
+    return;
+  }
+  try {
+    const res = await fetch(url + '?accion=leerResultados');
+    const data = await res.json();
+    if (data.ok && data.resultados) {
+      RESULTS = data.resultados;
+      // Guardar también en localStorage como caché
+      localStorage.setItem('wc2026_results', JSON.stringify(RESULTS));
+    }
+  } catch(e) {
+    // Si falla la nube, usar localStorage como caché
+    RESULTS = JSON.parse(localStorage.getItem('wc2026_results') || '{}');
+  }
+}
+
+// Guardar resultado en Sheets + localStorage
+async function syncResultado(matchId) {
+  const r = RESULTS[matchId];
+  if (!r) return;
+  // Siempre guardar en localStorage primero (instantáneo)
+  localStorage.setItem('wc2026_results', JSON.stringify(RESULTS));
+
+  const url = getScriptURL();
+  if (!url) return;
+  try {
+    await fetch(url, {
+      method: 'POST',
+      body: JSON.stringify({
+        accion: 'guardarResultado',
+        matchId: matchId,
+        golesLocal:  r.home,
+        golesVisita: r.away
+      }),
+      headers: {'Content-Type': 'text/plain'}
+    });
+  } catch(e) {
+    console.warn('No se pudo sincronizar con la nube:', e);
+  }
+}
 
 // ================================================================ HELPERS
 function getTeam(code) {
@@ -1153,7 +1201,8 @@ function saveResult(matchId) {
   const h = document.getElementById(`score-h-${matchId}`).value;
   const a = document.getElementById(`score-a-${matchId}`).value;
   RESULTS[matchId] = {home: h, away: a};
-  localStorage.setItem('wc2026_results', JSON.stringify(RESULTS));
+  // Sincronizar con nube (y localStorage como caché)
+  syncResultado(matchId);
   renderGroups();
   renderResults();
 }
@@ -1358,14 +1407,21 @@ function showScreen(screen) {
   
   if (screen === 'grupos') { renderGroups(); renderBracket(); }
   if (screen === 'partidos') renderSchedule('all');
-  if (screen === 'resultados') renderResults();
+  if (screen === 'resultados') {
+    // Recargar desde nube antes de mostrar
+    cargarResultadosCloud().then(() => renderResults());
+  }
   if (screen === 'favoritos') renderFavoritos();
   if (screen === 'email') initEmailScreen();
 }
 
 // ================================================================ INIT
-renderGroups();
-renderBracket();
+// Cargar resultados desde la nube al iniciar
+cargarResultadosCloud().then(() => {
+  renderGroups();
+  renderBracket();
+});
 </script>
 </body>
 </html>
+
