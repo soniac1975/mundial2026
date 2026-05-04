@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -329,14 +330,24 @@ nav {
   }
   .nav-tabs::-webkit-scrollbar { display:none; }
   .nav-tab {
-    padding:10px 14px;
-    font-size:11px;
+    padding:8px 10px;
+    font-size:9px;
     flex-direction:column;
-    gap:3px;
+    gap:2px;
     text-align:center;
-    min-width:70px;
+    min-width:60px;
+    justify-content:center;
   }
-  .nav-tab .tab-icon { font-size:18px; }
+  .nav-tab .tab-icon { font-size:20px; }
+  /* Acortar textos de pestañas en móvil */
+  .nav-tab span:not(.tab-icon) { 
+    font-size:9px; 
+    line-height:1.2;
+    max-width:60px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
 
   /* PANTALLAS */
   .screen { padding:12px; }
@@ -446,6 +457,10 @@ nav {
   .filter-btn { min-height:36px; }
   .save-btn { padding:8px 16px; font-size:13px; min-height:36px; }
   .score-input input { width:48px; height:40px; font-size:18px; }
+
+  /* Ocultar Alerta Diaria en móvil */
+  #tab-email { display:none !important; }
+  #screen-email { display:none !important; }
 }
 
 /* Pantallas medianas — tablet */
@@ -475,19 +490,19 @@ nav {
   </div>
   <div class="nav-tabs">
     <div class="nav-tab active" onclick="showScreen('grupos')" id="tab-grupos">
-      <span class="tab-icon">🏟️</span> Grupos &amp; Llaves
+      <span class="tab-icon">🏟️</span> Grupos
     </div>
     <div class="nav-tab" onclick="showScreen('partidos')" id="tab-partidos">
-      <span class="tab-icon">📅</span> Partidos del Día
+      <span class="tab-icon">📅</span> Partidos
     </div>
     <div class="nav-tab" onclick="showScreen('resultados')" id="tab-resultados">
-      <span class="tab-icon">📊</span> Resultados &amp; Tabla
+      <span class="tab-icon">📊</span> Resultados
     </div>
     <div class="nav-tab" onclick="showScreen('favoritos')" id="tab-favoritos">
-      <span class="tab-icon">⭐</span> Colombia · España · Bélgica
+      <span class="tab-icon">⭐</span> Col·Esp·Bel
     </div>
     <div class="nav-tab" onclick="showScreen('email')" id="tab-email">
-      <span class="tab-icon">📧</span> Alerta Diaria
+      <span class="tab-icon">📧</span> Alertas
     </div>
   </div>
 </nav>
