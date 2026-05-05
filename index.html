@@ -877,41 +877,52 @@ let _syncTimeout = null;
 
 // Cargar resultados desde Sheets al iniciar
 async function cargarResultadosCloud() {
+  // Siempre cargar localStorage primero para respuesta inmediata
+  const local = JSON.parse(localStorage.getItem('wc2026_results') || '{}');
+  // Normalizar IDs a string
+  Object.keys(local).forEach(k => { RESULTS[k] = local[k]; });
+
   const url = getScriptURL();
-  if (!url) {
-    // Sin URL, usar localStorage como fallback
-    RESULTS = JSON.parse(localStorage.getItem('wc2026_results') || '{}');
-    return;
-  }
+  if (!url) return; // Sin URL, solo usar localStorage
+
   try {
-    const res = await fetch(url + '?accion=leerResultados');
+    const res = await fetch(url, {
+      method: 'POST',
+      body: JSON.stringify({accion: 'leerResultados'}),
+      headers: {'Content-Type': 'text/plain'}
+    });
     const data = await res.json();
     if (data.ok && data.resultados) {
-      RESULTS = data.resultados;
-      // Guardar también en localStorage como caché
+      // Mergear resultados de la nube (tienen prioridad)
+      Object.keys(data.resultados).forEach(k => {
+        RESULTS[k] = data.resultados[k];
+      });
+      // Actualizar caché local
       localStorage.setItem('wc2026_results', JSON.stringify(RESULTS));
     }
   } catch(e) {
-    // Si falla la nube, usar localStorage como caché
-    RESULTS = JSON.parse(localStorage.getItem('wc2026_results') || '{}');
+    console.warn('No se pudo cargar desde la nube, usando caché local:', e);
   }
 }
 
 // Guardar resultado en Sheets + localStorage
 async function syncResultado(matchId) {
-  const r = RESULTS[matchId];
+  const key = matchId.toString();
+  const r = RESULTS[key];
   if (!r) return;
-  // Siempre guardar en localStorage primero (instantáneo)
+
+  // Guardar en localStorage inmediatamente
   localStorage.setItem('wc2026_results', JSON.stringify(RESULTS));
 
   const url = getScriptURL();
   if (!url) return;
+
   try {
     await fetch(url, {
       method: 'POST',
       body: JSON.stringify({
-        accion: 'guardarResultado',
-        matchId: matchId,
+        accion:      'guardarResultado',
+        matchId:     key,
         golesLocal:  r.home,
         golesVisita: r.away
       }),
@@ -959,7 +970,7 @@ function calcStandings() {
   });
   
   MATCHES.filter(m => m.phase === 'group').forEach(m => {
-    const r = RESULTS[m.id];
+    const r = RESULTS[m.id.toString()];
     if (!r || r.home === '' || r.away === '') return;
     const gh = parseInt(r.home), ga = parseInt(r.away);
     if (isNaN(gh) || isNaN(ga)) return;
@@ -1088,7 +1099,7 @@ function renderSchedule(filter = 'all') {
       </div>
       ${byDate[date].map(m => {
         const home = getTeam(m.home), away = getTeam(m.away);
-        const r = RESULTS[m.id];
+        const r = RESULTS[m.id.toString()];
         const hasResult = r && r.home !== '' && r.away !== '';
         const cotH = formatTime(m.utcH, m.utcM, -5);
         const blzH = formatTime(m.utcH, m.utcM, -6);
@@ -1177,7 +1188,7 @@ function renderResults() {
           <p style="font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Resultados</p>
           ${matches.map(m => {
             const home = getTeam(m.home), away = getTeam(m.away);
-            const r = RESULTS[m.id] || {home:'', away:''};
+            const r = RESULTS[m.id.toString()] || {home:'', away:''};
             return `
             <div class="result-input-card">
               <div class="result-teams">
@@ -1198,11 +1209,11 @@ function renderResults() {
 }
 
 function saveResult(matchId) {
+  const key = matchId.toString();
   const h = document.getElementById(`score-h-${matchId}`).value;
   const a = document.getElementById(`score-a-${matchId}`).value;
-  RESULTS[matchId] = {home: h, away: a};
-  // Sincronizar con nube (y localStorage como caché)
-  syncResultado(matchId);
+  RESULTS[key] = {home: h, away: a};
+  syncResultado(key);
   renderGroups();
   renderResults();
 }
@@ -1239,7 +1250,7 @@ function renderFavoritos() {
         </div>
         ${myMatches.map(m => {
           const home = getTeam(m.home), away = getTeam(m.away);
-          const r = RESULTS[m.id];
+          const r = RESULTS[m.id.toString()];
           const hasResult = r && r.home !== '' && r.away !== '';
           const cotH = formatTime(m.utcH, m.utcM, -5);
           const blzH = formatTime(m.utcH, m.utcM, -6);
@@ -1424,4 +1435,3 @@ cargarResultadosCloud().then(() => {
 </script>
 </body>
 </html>
-
