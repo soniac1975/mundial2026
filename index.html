@@ -1288,9 +1288,11 @@ function renderFavoritos() {
 
 // ================================================================ EMAIL — Apps Script Integration
 const APPS_SCRIPT_URL_KEY = 'wc2026_appsscript_url';
+// URL fija del Apps Script — siempre disponible en todos los dispositivos
+const APPS_SCRIPT_URL_FIJA = 'https://script.google.com/macros/s/AKfycbxivtHeXFjxgSybIxfez0HVGSCDZGkdCHCHw38sMYfIqmkyCe7VXjZRhAOGGDcOxnH7/exec';
 
 function getScriptURL() {
-  return localStorage.getItem(APPS_SCRIPT_URL_KEY) || '';
+  return localStorage.getItem(APPS_SCRIPT_URL_KEY) || APPS_SCRIPT_URL_FIJA;
 }
 
 function guardarScriptURL(url) {
