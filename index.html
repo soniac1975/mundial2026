@@ -1,14 +1,8 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Mundial 2026">
-<meta name="theme-color" content="#0A0E1A">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mundial 2026 — Mi Torneo</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -32,6 +26,8 @@
   --col: #FFD700;
   --esp: #AA151B;
   --bel: #000000;
+  --nzl: #00247D;
+  --sco: #003DA5;
 }
 * { margin:0; padding:0; box-sizing:border-box; }
 body { font-family:'Inter',sans-serif; background:var(--dark); color:var(--text); min-height:100vh; }
@@ -241,6 +237,8 @@ nav {
 .team-banner.col { background:linear-gradient(135deg,rgba(255,215,0,0.15),rgba(0,50,0,0.3)); border:1px solid rgba(255,215,0,0.3); }
 .team-banner.esp { background:linear-gradient(135deg,rgba(170,21,27,0.2),rgba(240,180,0,0.1)); border:1px solid rgba(170,21,27,0.4); }
 .team-banner.bel { background:linear-gradient(135deg,rgba(0,0,0,0.4),rgba(237,41,57,0.15)); border:1px solid rgba(200,0,0,0.3); }
+.team-banner.nzl { background:linear-gradient(135deg,rgba(0,36,125,0.25),rgba(204,0,0,0.12)); border:1px solid rgba(0,36,125,0.4); }
+.team-banner.sco { background:linear-gradient(135deg,rgba(0,61,165,0.25),rgba(255,255,255,0.05)); border:1px solid rgba(0,61,165,0.45); }
 .team-flag-big { font-size:42px; }
 .team-banner-name { font-family:'Bebas Neue',sans-serif; font-size:28px; letter-spacing:3px; }
 .team-group { font-size:13px; color:var(--text2); margin-top:2px; }
@@ -308,176 +306,13 @@ nav {
   margin-top:16px; line-height:1.6;
 }
 
-/* ================================================================ RESPONSIVE MÓVIL */
-
-/* NAV en móvil — logo arriba, tabs abajo con scroll horizontal */
+/* RESPONSIVE */
 @media(max-width:768px) {
-  nav {
-    flex-direction:column;
-    position:sticky; top:0; z-index:100;
-  }
-  .nav-logo {
-    padding:10px 16px;
-    border-right:none;
-    border-bottom:1px solid var(--border2);
-    justify-content:center;
-  }
-  .nav-logo span { font-size:18px; }
-  .nav-tabs {
-    overflow-x:auto;
-    -webkit-overflow-scrolling:touch;
-    scrollbar-width:none;
-  }
-  .nav-tabs::-webkit-scrollbar { display:none; }
-  .nav-tab {
-    padding:8px 10px;
-    font-size:9px;
-    flex-direction:column;
-    gap:2px;
-    text-align:center;
-    min-width:60px;
-    justify-content:center;
-  }
-  .nav-tab .tab-icon { font-size:20px; }
-  /* Acortar textos de pestañas en móvil */
-  .nav-tab span:not(.tab-icon) { 
-    font-size:9px; 
-    line-height:1.2;
-    max-width:60px;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
-  }
-
-  /* PANTALLAS */
-  .screen { padding:12px; }
-  .page-header { margin-bottom:16px; }
-  .page-header h1 { font-size:26px; letter-spacing:2px; }
-  .page-header p { font-size:12px; }
-
-  /* GRUPOS */
-  .groups-grid { grid-template-columns:1fr; gap:12px; }
-  .group-table th { font-size:9px; padding:6px 6px; }
-  .group-table td { padding:8px 6px; font-size:12px; }
-  .team-name { font-size:12px; }
-  .flag { font-size:16px; }
-
-  /* BRACKET — scroll horizontal en móvil */
-  .bracket-container { overflow-x:auto; -webkit-overflow-scrolling:touch; }
-  .bracket { min-width:900px; }
-
-  /* PARTIDOS */
-  .schedule-filters { gap:6px; }
-  .filter-btn { padding:6px 12px; font-size:12px; }
-
-  .match-card {
-    flex-direction:column;
-    padding:12px;
-    gap:10px;
-    align-items:stretch;
-  }
-  .match-times {
-    display:flex;
-    justify-content:space-around;
-    min-width:unset;
-    background:var(--dark3);
-    border-radius:8px;
-    padding:8px;
-    order:1;
-  }
-  .time-row {
-    flex-direction:column;
-    align-items:center;
-    gap:2px;
-  }
-  .time-tz { font-size:10px; }
-  .time-val { font-size:13px; font-weight:600; }
-
-  .match-teams {
-    order:2;
-    justify-content:center;
-    gap:8px;
-  }
-  .match-team { font-size:13px; }
-  .match-team.home span:first-child,
-  .match-team.away span:last-child { font-size:10px; }
-
-  .match-meta {
-    order:3;
-    text-align:center;
-    display:flex;
-    flex-direction:row;
-    justify-content:center;
-    align-items:center;
-    gap:8px;
-    min-width:unset;
-  }
-
-  /* RESULTADOS */
-  .standings-section > div[style*="grid"] {
-    display:flex !important;
-    flex-direction:column !important;
-    gap:16px !important;
-  }
-  .result-input-card {
-    flex-direction:column;
-    gap:10px;
-    padding:12px;
-  }
-  .result-teams {
-    flex-direction:column;
-    gap:8px;
-    width:100%;
-  }
-  .result-team { text-align:center !important; font-size:13px; }
-  .score-input { justify-content:center; }
-  .standings-table { font-size:11px; }
-  .standings-table th, .standings-table td { padding:7px 5px; }
-
-  /* FAVORITOS */
-  .fav-header { flex-direction:column; text-align:center; padding:14px; gap:8px; margin-bottom:20px; }
-  .fav-title { font-size:24px; }
-  .team-banner { padding:14px 16px; gap:12px; }
-  .team-flag-big { font-size:32px; }
-  .team-banner-name { font-size:22px; }
-
-  /* EMAIL */
-  .email-panel { padding:16px; max-width:100%; }
-  .email-panel h2 { font-size:20px; }
-  /* El grid de 2 columnas de email pasa a 1 columna */
-  #screen-email > div[style*="grid-template-columns:1fr 1fr"] {
-    display:flex !important;
-    flex-direction:column !important;
-    gap:16px !important;
-    max-width:100% !important;
-  }
-
-  /* BOTONES más grandes para tocar con el dedo */
-  .submit-btn { padding:14px; font-size:15px; min-height:48px; }
-  .filter-btn { min-height:36px; }
-  .save-btn { padding:8px 16px; font-size:13px; min-height:36px; }
-  .score-input input { width:48px; height:40px; font-size:18px; }
-
-  /* Ocultar Alerta Diaria en móvil */
-  #tab-email { display:none !important; }
-  #screen-email { display:none !important; }
-}
-
-/* Pantallas medianas — tablet */
-@media(min-width:769px) and (max-width:1024px) {
-  .groups-grid { grid-template-columns:repeat(2, 1fr); }
-  .screen { padding:20px; }
-  #screen-email > div[style*="grid-template-columns:1fr 1fr"] {
-    max-width:100% !important;
-  }
-}
-
-/* Touch targets — accesibilidad táctil */
-@media(hover:none) and (pointer:coarse) {
-  .nav-tab { min-height:44px; }
-  .filter-btn { min-height:40px; }
-  .submit-btn { min-height:50px; }
-  .group-table td, .group-table th { padding:10px 8px; }
+  .screen { padding:16px; }
+  .groups-grid { grid-template-columns:1fr; }
+  .match-card { flex-wrap:wrap; }
+  .match-times { min-width:100%; }
+  nav { flex-wrap:wrap; }
 }
 </style>
 </head>
@@ -490,19 +325,19 @@ nav {
   </div>
   <div class="nav-tabs">
     <div class="nav-tab active" onclick="showScreen('grupos')" id="tab-grupos">
-      <span class="tab-icon">🏟️</span> Grupos
+      <span class="tab-icon">🏟️</span> Grupos &amp; Llaves
     </div>
     <div class="nav-tab" onclick="showScreen('partidos')" id="tab-partidos">
-      <span class="tab-icon">📅</span> Partidos
+      <span class="tab-icon">📅</span> Partidos del Día
     </div>
     <div class="nav-tab" onclick="showScreen('resultados')" id="tab-resultados">
-      <span class="tab-icon">📊</span> Resultados
+      <span class="tab-icon">📊</span> Resultados &amp; Tabla
     </div>
     <div class="nav-tab" onclick="showScreen('favoritos')" id="tab-favoritos">
-      <span class="tab-icon">⭐</span> Col·Esp·Bel
+      <span class="tab-icon">⭐</span> Col · Esp · Bel · SCO
     </div>
     <div class="nav-tab" onclick="showScreen('email')" id="tab-email">
-      <span class="tab-icon">📧</span> Alertas
+      <span class="tab-icon">📧</span> Alerta Diaria
     </div>
   </div>
 </nav>
@@ -555,7 +390,7 @@ nav {
 <div class="screen" id="screen-favoritos">
   <div class="page-header">
     <h1>Mis Equipos Favoritos</h1>
-    <p>Colombia · España · Bélgica — todos sus partidos en un solo lugar</p>
+    <p>Colombia · España · Bélgica · Escocia — todos sus partidos en un solo lugar</p>
   </div>
   <div class="favoritos-container" id="fav-content"></div>
 </div>
@@ -573,10 +408,16 @@ nav {
     <div class="email-panel">
       <h2>📧 Activar Alerta Diaria</h2>
       <p style="color:var(--text2);font-size:13px;line-height:1.6;margin-top:8px;">
-        Desde el <strong style="color:var(--gold)">11 de julio de 2026</strong>, 
+        Desde el <strong style="color:var(--gold)">11 de junio de 2026</strong>, 
         recibirás cada mañana a las <strong style="color:var(--gold)">8:00 AM</strong> 
         la programación completa del día con horarios en Colombia, Belize y Arizona.
       </p>
+      <div style="margin-top:10px;padding:10px 14px;background:rgba(201,168,76,0.07);border:1px solid var(--border);border-radius:8px;font-size:12px;color:var(--text2);line-height:1.7;">
+        📬 <strong style="color:var(--text)">Suscriptores fijos:</strong><br>
+        🟢 Sonia — sonia.ceballos1975@gmail.com<br>
+        🟢 Kay — cayebrat@gmail.com<br>
+        🟢 Ana — anamaceballos@gmail.com
+      </div>
       <div class="email-form">
         <div class="form-group">
           <label>Correo electrónico</label>
@@ -587,7 +428,7 @@ nav {
           <input type="text" id="name-input" placeholder="Tu nombre" value="Sonia">
         </div>
         <div class="form-group">
-          <label style="font-size:12px;color:var(--text3);">Recibirás partidos de todos los equipos + énfasis en Colombia, España y Bélgica</label>
+          <label style="font-size:12px;color:var(--text3);">Recibirás partidos de todos los equipos + énfasis en Colombia, España, Bélgica y Escocia</label>
         </div>
         <button class="submit-btn" id="btn-suscribir" onclick="subscribeEmail()">
           Activar Alerta Diaria →
@@ -871,67 +712,8 @@ const MATCHES = [
   {id:601,date:'2026-07-19', utcH:19, utcM:0,  home:'Gan. SF1',  away:'Gan. SF2',  group:null, phase:'final', stadium:'MetLife Stadium, Nueva Jersey'},
 ];
 
-// Results storage — sincronizado con Google Sheets
-let RESULTS = {};
-let _syncTimeout = null;
-
-// Cargar resultados desde Sheets al iniciar
-async function cargarResultadosCloud() {
-  // Siempre cargar localStorage primero para respuesta inmediata
-  const local = JSON.parse(localStorage.getItem('wc2026_results') || '{}');
-  // Normalizar IDs a string
-  Object.keys(local).forEach(k => { RESULTS[k] = local[k]; });
-
-  const url = getScriptURL();
-  if (!url) return; // Sin URL, solo usar localStorage
-
-  try {
-    const res = await fetch(url, {
-      method: 'POST',
-      body: JSON.stringify({accion: 'leerResultados'}),
-      headers: {'Content-Type': 'text/plain'}
-    });
-    const data = await res.json();
-    if (data.ok && data.resultados) {
-      // Mergear resultados de la nube (tienen prioridad)
-      Object.keys(data.resultados).forEach(k => {
-        RESULTS[k] = data.resultados[k];
-      });
-      // Actualizar caché local
-      localStorage.setItem('wc2026_results', JSON.stringify(RESULTS));
-    }
-  } catch(e) {
-    console.warn('No se pudo cargar desde la nube, usando caché local:', e);
-  }
-}
-
-// Guardar resultado en Sheets + localStorage
-async function syncResultado(matchId) {
-  const key = matchId.toString();
-  const r = RESULTS[key];
-  if (!r) return;
-
-  // Guardar en localStorage inmediatamente
-  localStorage.setItem('wc2026_results', JSON.stringify(RESULTS));
-
-  const url = getScriptURL();
-  if (!url) return;
-
-  try {
-    await fetch(url, {
-      method: 'POST',
-      body: JSON.stringify({
-        accion:      'guardarResultado',
-        matchId:     key,
-        golesLocal:  r.home,
-        golesVisita: r.away
-      }),
-      headers: {'Content-Type': 'text/plain'}
-    });
-  } catch(e) {
-    console.warn('No se pudo sincronizar con la nube:', e);
-  }
-}
+// Results storage
+let RESULTS = JSON.parse(localStorage.getItem('wc2026_results') || '{}');
 
 // ================================================================ HELPERS
 function getTeam(code) {
@@ -970,7 +752,7 @@ function calcStandings() {
   });
   
   MATCHES.filter(m => m.phase === 'group').forEach(m => {
-    const r = RESULTS[m.id.toString()];
+    const r = RESULTS[m.id];
     if (!r || r.home === '' || r.away === '') return;
     const gh = parseInt(r.home), ga = parseInt(r.away);
     if (isNaN(gh) || isNaN(ga)) return;
@@ -1099,7 +881,7 @@ function renderSchedule(filter = 'all') {
       </div>
       ${byDate[date].map(m => {
         const home = getTeam(m.home), away = getTeam(m.away);
-        const r = RESULTS[m.id.toString()];
+        const r = RESULTS[m.id];
         const hasResult = r && r.home !== '' && r.away !== '';
         const cotH = formatTime(m.utcH, m.utcM, -5);
         const blzH = formatTime(m.utcH, m.utcM, -6);
@@ -1188,7 +970,7 @@ function renderResults() {
           <p style="font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Resultados</p>
           ${matches.map(m => {
             const home = getTeam(m.home), away = getTeam(m.away);
-            const r = RESULTS[m.id.toString()] || {home:'', away:''};
+            const r = RESULTS[m.id] || {home:'', away:''};
             return `
             <div class="result-input-card">
               <div class="result-teams">
@@ -1209,20 +991,19 @@ function renderResults() {
 }
 
 function saveResult(matchId) {
-  const key = matchId.toString();
   const h = document.getElementById(`score-h-${matchId}`).value;
   const a = document.getElementById(`score-a-${matchId}`).value;
-  RESULTS[key] = {home: h, away: a};
-  syncResultado(key);
+  RESULTS[matchId] = {home: h, away: a};
+  localStorage.setItem('wc2026_results', JSON.stringify(RESULTS));
   renderGroups();
   renderResults();
 }
 
 // ================================================================ RENDER FAVORITOS
 function renderFavoritos() {
-  const favTeams = ['COL','ESP','BEL'];
-  const teamNames = {COL:'Colombia', ESP:'España', BEL:'Bélgica'};
-  const teamBanners = {COL:'col', ESP:'esp', BEL:'bel'};
+  const favTeams = ['COL','ESP','BEL','SCO'];
+  const teamNames = {COL:'Colombia', ESP:'España', BEL:'Bélgica', SCO:'Escocia'};
+  const teamBanners = {COL:'col', ESP:'esp', BEL:'bel', SCO:'sco'};
   const groupOf = {};
   GROUPS.forEach(g => g.teams.forEach(t => { groupOf[t.code] = g.letter; }));
   
@@ -1231,7 +1012,7 @@ function renderFavoritos() {
     <div class="fav-header">
       <div style="font-size:36px">⭐</div>
       <div>
-        <div class="fav-title">Colombia · España · Bélgica</div>
+        <div class="fav-title">Colombia · España · Bélgica · Escocia</div>
         <div style="color:var(--text2);font-size:13px;">Todos sus partidos del Mundial 2026</div>
       </div>
     </div>
@@ -1250,7 +1031,7 @@ function renderFavoritos() {
         </div>
         ${myMatches.map(m => {
           const home = getTeam(m.home), away = getTeam(m.away);
-          const r = RESULTS[m.id.toString()];
+          const r = RESULTS[m.id];
           const hasResult = r && r.home !== '' && r.away !== '';
           const cotH = formatTime(m.utcH, m.utcM, -5);
           const blzH = formatTime(m.utcH, m.utcM, -6);
@@ -1288,11 +1069,9 @@ function renderFavoritos() {
 
 // ================================================================ EMAIL — Apps Script Integration
 const APPS_SCRIPT_URL_KEY = 'wc2026_appsscript_url';
-// URL fija del Apps Script — siempre disponible en todos los dispositivos
-const APPS_SCRIPT_URL_FIJA = 'https://script.google.com/macros/s/AKfycbxivtHeXFjxgSybIxfez0HVGSCDZGkdCHCHw38sMYfIqmkyCe7VXjZRhAOGGDcOxnH7/exec';
 
 function getScriptURL() {
-  return localStorage.getItem(APPS_SCRIPT_URL_KEY) || APPS_SCRIPT_URL_FIJA;
+  return localStorage.getItem(APPS_SCRIPT_URL_KEY) || '';
 }
 
 function guardarScriptURL(url) {
@@ -1339,6 +1118,28 @@ function showEmailMsg(tipo, html) {
   if (tipo === 'error') err.innerHTML = html;
 }
 
+// ================================================================ SUSCRIPTORES FIJOS
+const SUSCRIPTORES_FIJOS = [
+  {email:'sonia.ceballos1975@gmail.com', nombre:'Sonia'},
+  {email:'cayebrat@gmail.com',           nombre:'Kay'},
+  {email:'anamaceballos@gmail.com',      nombre:'Ana'},
+];
+
+function initSuscriptoresFijos() {
+  const subs = JSON.parse(localStorage.getItem('wc2026_subs') || '[]');
+  let changed = false;
+  SUSCRIPTORES_FIJOS.forEach(sf => {
+    if (!subs.find(s => s.email === sf.email)) {
+      subs.push({email: sf.email, nombre: sf.nombre,
+        equipos:'Colombia,España,Bélgica,Escocia',
+        fecha: new Date().toISOString(), activo: true});
+      changed = true;
+    }
+  });
+  if (changed) localStorage.setItem('wc2026_subs', JSON.stringify(subs));
+}
+initSuscriptoresFijos();
+
 async function subscribeEmail() {
   const email  = document.getElementById('email-input').value.trim();
   const nombre = document.getElementById('name-input').value.trim();
@@ -1351,25 +1152,37 @@ async function subscribeEmail() {
   const subs = JSON.parse(localStorage.getItem('wc2026_subs') || '[]');
   const yaExiste = subs.find(s => s.email === email);
   if (!yaExiste) {
-    subs.push({email, nombre, equipos:'Colombia,España,Bélgica', fecha: new Date().toISOString(), activo: true});
+    subs.push({email, nombre, equipos:'Colombia,España,Bélgica,Escocia', fecha: new Date().toISOString(), activo: true});
     localStorage.setItem('wc2026_subs', JSON.stringify(subs));
   }
 
-  // Intentar enviar al Apps Script
+  // Intentar enviar al Apps Script — registrar AMBOS suscriptores fijos
   try {
-    const resp = await callAppsScript({
-      accion: 'suscribir',
-      email, nombre,
-      equipos: 'Colombia,España,Bélgica'
+    // Registrar a Sonia
+    await callAppsScript({
+      accion: 'suscribir', email, nombre,
+      equipos: 'Colombia,España,Bélgica,Escocia'
     });
-    showEmailMsg('ok', `✅ ${resp.msg || '¡Suscripción activada! Revisa tu bandeja de entrada.'}`);
+    // Registrar a Kay automáticamente
+    await callAppsScript({
+      accion: 'suscribir',
+      email: 'cayebrat@gmail.com', nombre: 'Kay',
+      equipos: 'Colombia,España,Bélgica,Escocia'
+    });
+    // Registrar a Ana automáticamente
+    await callAppsScript({
+      accion: 'suscribir',
+      email: 'anamaceballos@gmail.com', nombre: 'Ana',
+      equipos: 'Colombia,España,Bélgica,Escocia'
+    });
+    showEmailMsg('ok', `✅ ¡Alerta activada para <strong>${nombre}</strong>, <strong>Kay</strong> y <strong>Ana</strong>! Los tres recibirán el correo diario.`);
   } catch(e) {
     // Sin URL configurada → guardar localmente e informar
     if (e.message.includes('URL del Apps Script')) {
       showEmailMsg('ok',
-        `✅ ¡Registrado localmente, <strong>${nombre}</strong>!<br>
-         📋 Cuando configures el Apps Script, la suscripción se activará automáticamente.<br>
-         📧 Email: <strong>${email}</strong>`);
+        `✅ ¡Registrados localmente: <strong>${nombre}</strong>, <strong>Kay</strong> y <strong>Ana</strong>!<br>
+         📋 Cuando configures el Apps Script, las tres suscripciones se activarán.<br>
+         📧 ${email} · cayebrat@gmail.com · anamaceballos@gmail.com`);
     } else {
       showEmailMsg('error', `⚠ Error al conectar con el servidor: ${e.message}<br>
         <small>Verifica que la URL del Apps Script sea correcta y esté publicada con acceso público.</small>`);
@@ -1387,8 +1200,10 @@ async function enviarPrueba() {
   btn.textContent = 'Enviando prueba...'; btn.disabled = true;
 
   try {
-    const resp = await callAppsScript({accion: 'testEmail', email});
-    showEmailMsg('ok', `📨 ${resp.msg || 'Email de prueba enviado. Revisa tu bandeja de entrada.'}`);
+    await callAppsScript({accion: 'testEmail', email});
+    await callAppsScript({accion: 'testEmail', email: 'cayebrat@gmail.com'});
+    await callAppsScript({accion: 'testEmail', email: 'anamaceballos@gmail.com'});
+    showEmailMsg('ok', `📨 Emails de prueba enviados a <strong>${email}</strong>, <strong>cayebrat@gmail.com</strong> y <strong>anamaceballos@gmail.com</strong>. ¡Revisen sus bandejas!`);
   } catch(e) {
     showEmailMsg('error', `⚠ ${e.message}`);
   }
@@ -1420,20 +1235,14 @@ function showScreen(screen) {
   
   if (screen === 'grupos') { renderGroups(); renderBracket(); }
   if (screen === 'partidos') renderSchedule('all');
-  if (screen === 'resultados') {
-    // Recargar desde nube antes de mostrar
-    cargarResultadosCloud().then(() => renderResults());
-  }
+  if (screen === 'resultados') renderResults();
   if (screen === 'favoritos') renderFavoritos();
   if (screen === 'email') initEmailScreen();
 }
 
 // ================================================================ INIT
-// Cargar resultados desde la nube al iniciar
-cargarResultadosCloud().then(() => {
-  renderGroups();
-  renderBracket();
-});
+renderGroups();
+renderBracket();
 </script>
 </body>
 </html>
