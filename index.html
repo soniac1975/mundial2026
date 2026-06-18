@@ -218,7 +218,7 @@ nav{background:var(--dark2);border-bottom:1px solid var(--border);position:stick
 
 <script>
 const APPS_SCRIPT_URL_KEY='wc2026_appsscript_url';
-const HARDCODED_URL='https://script.google.com/macros/s/AKfycbxivtHeXFjxgSybIxfez0HVGSCDZGkdCHCHw38sMYfIqmkyCe7VXjZRhAOGGDcOxnH7/exec';
+const HARDCODED_URL='https://script.google.com/macros/s/AKfycbzevKR8ffrYs81UKCsFQK-a5esgY_xPhjBYmn6XecWWCgWE97rIskoRsHWA0F4FFiXQ/exec';
 function getScriptURL(){return localStorage.getItem(APPS_SCRIPT_URL_KEY)||HARDCODED_URL;}
 function guardarScriptURL(url){localStorage.setItem(APPS_SCRIPT_URL_KEY,url);const st=document.getElementById('url-status');st.style.color=url.includes('script.google.com')?'#86EFAC':'#FCA5A5';st.textContent=url.includes('script.google.com')?'✓ URL guardada':'⚠ URL inválida';}
 function initEmailScreen(){const s=getScriptURL();if(s)document.getElementById('script-url').value=s;}
@@ -238,7 +238,8 @@ async function sincronizarResultados(){
 }
 async function saveResult(matchId){
   const h=document.getElementById('score-h-'+matchId).value,a=document.getElementById('score-a-'+matchId).value;
-  RESULTS[String(matchId)]={home:h,away:a};renderGroups();renderResults();
+  if(h===''||a===''){setSyncStatus('error','Completa ambos marcadores');return;}
+  RESULTS[String(matchId)]={home:h,away:a};renderGroups();
   setSyncStatus('syncing','Guardando...');
   try{await callAppsScript({accion:'guardarResultado',matchId:String(matchId),golesLocal:h,golesVisita:a});setSyncStatus('synced','Guardado ✓');}
   catch(e){setSyncStatus('error','Error al guardar');}
@@ -543,7 +544,7 @@ function showScreen(screen){
   document.getElementById('tab-'+screen).classList.add('active');
   if(screen==='grupos'){renderGroups();renderBracket();}
   if(screen==='partidos')renderSchedule('all');
-  if(screen==='resultados'){renderResults();sincronizarResultados();}
+  if(screen==='resultados'){sincronizarResultados();}
   if(screen==='favoritos')renderFavoritos();
   if(screen==='email')initEmailScreen();
 }
@@ -552,3 +553,4 @@ renderGroups();renderBracket();sincronizarResultados();
 </script>
 </body>
 </html>
+
