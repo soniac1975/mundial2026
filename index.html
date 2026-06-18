@@ -231,14 +231,14 @@ async function sincronizarResultados(){
   try{
     const res=await fetch(getScriptURL()+'?accion=leerResultados');
     const data=await res.json();
-    if(data.ok&&data.resultados){RESULTS=data.resultados;setSyncStatus('synced','Sincronizado ✓');}
-    else{const d2=await callAppsScript({accion:'leerResultados'});if(d2.ok&&d2.resultados){RESULTS=d2.resultados;setSyncStatus('synced','Sincronizado ✓');}}
+    if(data.ok&&data.resultados){const raw=data.resultados;RESULTS={};Object.keys(raw).forEach(k=>{RESULTS[String(k)]=raw[k];});setSyncStatus('synced','Sincronizado ✓');}
+    else{const d2=await callAppsScript({accion:'leerResultados'});if(d2.ok&&d2.resultados){const raw2=d2.resultados;RESULTS={};Object.keys(raw2).forEach(k=>{RESULTS[String(k)]=raw2[k];});setSyncStatus('synced','Sincronizado ✓');}}
     renderGroups();renderResults();
   }catch(e){setSyncStatus('error','Sin conexión');}
 }
 async function saveResult(matchId){
   const h=document.getElementById('score-h-'+matchId).value,a=document.getElementById('score-a-'+matchId).value;
-  RESULTS[matchId]={home:h,away:a};renderGroups();renderResults();
+  RESULTS[String(matchId)]={home:h,away:a};renderGroups();renderResults();
   setSyncStatus('syncing','Guardando...');
   try{await callAppsScript({accion:'guardarResultado',matchId:matchId,golesLocal:h,golesVisita:a});setSyncStatus('synced','Guardado ✓');}
   catch(e){setSyncStatus('error','Error al guardar');}
@@ -429,7 +429,7 @@ function calcStandings(){
   const st={};
   GROUPS.forEach(g=>{st[g.letter]=g.teams.map(t=>({code:t.code,p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0}));});
   MATCHES.filter(m=>m.phase==='group').forEach(m=>{
-    const r=RESULTS[m.id];if(!r||r.home===''||r.away==='')return;
+    const r=RESULTS[String(m.id)];if(!r||r.home===''||r.away==='')return;
     const gh=parseInt(r.home),ga=parseInt(r.away);if(isNaN(gh)||isNaN(ga))return;
     if(!st[m.group])return;
     const ht=st[m.group].find(t=>t.code===m.home),at=st[m.group].find(t=>t.code===m.away);
