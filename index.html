@@ -233,13 +233,13 @@ async function sincronizarResultados(){
     const data=await res.json();
     if(data.ok&&data.resultados){const raw=data.resultados;RESULTS={};Object.keys(raw).forEach(k=>{RESULTS[String(k)]=raw[k];});setSyncStatus('synced','Sincronizado ✓');}
     else{const d2=await callAppsScript({accion:'leerResultados'});if(d2.ok&&d2.resultados){const raw2=d2.resultados;RESULTS={};Object.keys(raw2).forEach(k=>{RESULTS[String(k)]=raw2[k];});setSyncStatus('synced','Sincronizado ✓');}}
-    renderGroups();renderResults();
+    renderGroups();renderResults();renderBracket();
   }catch(e){setSyncStatus('error','Sin conexión');}
 }
 async function saveResult(matchId){
   const h=document.getElementById('score-h-'+matchId).value,a=document.getElementById('score-a-'+matchId).value;
   if(h===''||a===''){setSyncStatus('error','Completa ambos marcadores');return;}
-  RESULTS[String(matchId)]={home:h,away:a};renderGroups();
+  RESULTS[String(matchId)]={home:h,away:a};renderGroups();renderBracket();
   setSyncStatus('syncing','Guardando...');
   try{await callAppsScript({accion:'guardarResultado',matchId:String(matchId),golesLocal:h,golesVisita:a});setSyncStatus('synced','Guardado ✓');}
   catch(e){setSyncStatus('error','Error al guardar');}
@@ -430,19 +430,117 @@ function renderGroups(){
   }).join('');
 }
 
+// ============================================================
+// LLAVE DEL TORNEO — dinámica, basada en RESULTS reales
+// ============================================================
+function resolveLabel(label, st, best8, used){
+  let m=label.match(/^([12])°([A-L])$/);
+  if(m){
+    const pos=parseInt(m[1])-1, g=m[2];
+    return (st[g] && st[g][pos]) ? st[g][pos].code : null;
+  }
+  m=label.match(/^3°([A-L]+)$/);
+  if(m){
+    const letters=m[1].split('');
+    for(const t of best8){
+      if(letters.includes(t.group) && !used.has(t.code)){ used.add(t.code); return t.code; }
+    }
+    return null;
+  }
+  return null;
+}
+function winnerOf(matchId, codeA, codeB){
+  if(!codeA||!codeB) return null;
+  const r=RESULTS[String(matchId)];
+  if(!r||r.home===''||r.away==='') return null;
+  const h=parseInt(r.home), a=parseInt(r.away);
+  if(isNaN(h)||isNaN(a)||h===a) return null;
+  return h>a?codeA:codeB;
+}
+function loserOf(matchId, codeA, codeB){
+  const w=winnerOf(matchId,codeA,codeB);
+  if(!w) return null;
+  return w===codeA?codeB:codeA;
+}
+function scoreOf(matchId){
+  const r=RESULTS[String(matchId)];
+  return (r&&r.home!==''&&r.away!=='') ? r : null;
+}
+function bracketCell(code, label, score, isHome){
+  if(code){
+    const tm=getTeam(code);
+    return '<div class="bracket-team"><span>'+tm.flag+' '+tm.name+'</span><span class="bracket-score">'+(score?(isHome?score.home:score.away):'—')+'</span></div>';
+  }
+  return '<div class="bracket-team tbd"><span>'+(label||'Por definir')+'</span><span class="bracket-score">—</span></div>';
+}
+function pairHtml(homeCode,homeLabel,awayCode,awayLabel,score){
+  return '<div class="bracket-match">'+
+    bracketCell(homeCode, homeLabel, score, true)+
+    bracketCell(awayCode, awayLabel, score, false)+
+    '</div>';
+}
+
 function renderBracket(){
-  const rounds=[
-    {label:'Ronda 32',slots:['2°A vs 2°B','1°C vs 2°F','1°E vs 3er','1°F vs 2°C','2°E vs 2°I','1°I vs 3er','1°A vs 3er','1°L vs 3er','1°G vs 3er','1°D vs 3er','1°H vs 2°J','2°K vs 2°L','1°B vs 3er','2°D vs 2°G','1°J vs 2°H','1°K vs 3er']},
-    {label:'Octavos',slots:['M1 vs M2','M3 vs M4','M5 vs M6','M7 vs M8','M9 vs M10','M11 vs M12','M13 vs M14','M15 vs M16']},
-    {label:'Cuartos',slots:['QF1','QF2','QF3','QF4']},
-    {label:'Semis',slots:['SF1','SF2']},
-    {label:'Final',slots:['CAMPEÓN']},
-  ];
-  document.getElementById('bracket-view').innerHTML=rounds.map(r=>
-    '<div class="bracket-round"><div class="round-header">'+r.label+'</div><div class="bracket-matches">'+
-    r.slots.map(s=>{const p=s.split(' vs ');return p.length===2?'<div class="bracket-match"><div class="bracket-team tbd"><span>'+p[0]+'</span><span class="bracket-score">—</span></div><div class="bracket-team tbd"><span>'+p[1]+'</span><span class="bracket-score">—</span></div></div>':'<div class="bracket-match"><div class="bracket-team tbd" style="justify-content:center;border-bottom:none;">'+s+'</div></div>';}).join('')+
-    '</div></div>'
-  ).join('');
+  const st=calcStandings();
+  const stKey={};
+  GROUPS.forEach(g=>{ stKey[g.letter]=st[g.letter]; });
+
+  let thirds=GROUPS.map(g=>{
+    const t3=st[g.letter][2];
+    return {code:t3.code, group:g.letter, pts:t3.pts, gf:t3.gf, ga:t3.ga};
+  });
+  thirds.sort((a,b)=> b.pts-a.pts || (b.gf-b.ga)-(a.gf-a.ga) || b.gf-a.gf);
+  const best8=thirds.slice(0,8);
+  const used=new Set();
+
+  const r32=MATCHES.filter(m=>m.phase==='r32').sort((a,b)=>a.id-b.id).map(m=>{
+    const homeCode=resolveLabel(m.home, stKey, best8, used);
+    const awayCode=resolveLabel(m.away, stKey, best8, used);
+    return {id:m.id, homeLabel:m.home, awayLabel:m.away, homeCode, awayCode, score:scoreOf(m.id)};
+  });
+  const r32Winners=r32.map(m=>winnerOf(m.id,m.homeCode,m.awayCode));
+
+  const r16=MATCHES.filter(m=>m.phase==='r16').sort((a,b)=>a.id-b.id).map((m,i)=>{
+    const homeCode=r32Winners[2*i], awayCode=r32Winners[2*i+1];
+    return {id:m.id, homeCode, awayCode, score:scoreOf(m.id)};
+  });
+  const r16Winners=r16.map(m=>winnerOf(m.id,m.homeCode,m.awayCode));
+
+  const qf=MATCHES.filter(m=>m.phase==='qf').sort((a,b)=>a.id-b.id).map((m,i)=>{
+    const homeCode=r16Winners[2*i], awayCode=r16Winners[2*i+1];
+    return {id:m.id, homeCode, awayCode, score:scoreOf(m.id)};
+  });
+  const qfWinners=qf.map(m=>winnerOf(m.id,m.homeCode,m.awayCode));
+
+  const sf=MATCHES.filter(m=>m.phase==='sf').sort((a,b)=>a.id-b.id).map((m,i)=>{
+    const homeCode=qfWinners[2*i], awayCode=qfWinners[2*i+1];
+    return {id:m.id, homeCode, awayCode, score:scoreOf(m.id)};
+  });
+  const sfWinners=sf.map(m=>winnerOf(m.id,m.homeCode,m.awayCode));
+  const sfLosers=sf.map(m=>loserOf(m.id,m.homeCode,m.awayCode));
+
+  const finalM=MATCHES.find(m=>m.phase==='final');
+  const finalHome=sfWinners[0], finalAway=sfWinners[1];
+  const finalScore=scoreOf(finalM.id);
+
+  const html=
+    '<div class="bracket-round"><div class="round-header">Ronda 32</div><div class="bracket-matches">'+
+      r32.map(m=>pairHtml(m.homeCode,m.homeLabel,m.awayCode,m.awayLabel,m.score)).join('')+
+    '</div></div>'+
+    '<div class="bracket-round"><div class="round-header">Octavos</div><div class="bracket-matches">'+
+      r16.map(m=>pairHtml(m.homeCode,'Por definir',m.awayCode,'Por definir',m.score)).join('')+
+    '</div></div>'+
+    '<div class="bracket-round"><div class="round-header">Cuartos</div><div class="bracket-matches">'+
+      qf.map(m=>pairHtml(m.homeCode,'Por definir',m.awayCode,'Por definir',m.score)).join('')+
+    '</div></div>'+
+    '<div class="bracket-round"><div class="round-header">Semis</div><div class="bracket-matches">'+
+      sf.map(m=>pairHtml(m.homeCode,'Por definir',m.awayCode,'Por definir',m.score)).join('')+
+    '</div></div>'+
+    '<div class="bracket-round"><div class="round-header">Final</div><div class="bracket-matches">'+
+      pairHtml(finalHome,'Finalista 1',finalAway,'Finalista 2',finalScore)+
+    '</div></div>';
+
+  document.getElementById('bracket-view').innerHTML=html;
 }
 
 function renderSchedule(filter){
