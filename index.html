@@ -49,6 +49,8 @@ nav{background:var(--dark2);border-bottom:1px solid var(--border);position:stick
 .bracket-team:first-child{border-bottom:1px solid var(--border2);}
 .bracket-team.tbd{color:var(--text3);font-style:italic;}
 .bracket-score{font-weight:700;font-size:14px;min-width:20px;text-align:center;}
+.bracket-origin{font-size:10px;color:var(--text3);font-weight:600;margin-left:4px;}
+.bracket-num{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--gold);text-align:center;padding:3px 0;background:rgba(201,168,76,0.08);border-bottom:1px solid var(--border2);}
 .schedule-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
 .filter-btn{padding:7px 16px;border-radius:20px;border:1px solid var(--border2);background:var(--surface);color:var(--text2);cursor:pointer;font-size:13px;transition:all 0.2s;font-family:'Inter',sans-serif;}
 .filter-btn:hover{border-color:var(--gold);color:var(--gold);}
@@ -352,22 +354,22 @@ const MATCHES=[
   {id:70,date:'2026-06-27',blzH:17,blzM:30,home:'COD',away:'UZB',group:'K',phase:'group',stadium:'Estadio Atlanta'},
   {id:71,date:'2026-06-27',blzH:20,blzM:0, home:'ALG',away:'AUT',group:'J',phase:'group',stadium:'Estadio Kansas City'},
   {id:72,date:'2026-06-27',blzH:20,blzM:0, home:'JOR',away:'ARG',group:'J',phase:'group',stadium:'Estadio Dallas'},
-  {id:101,date:'2026-06-28',blzH:13,blzM:0, home:'2°A',away:'2°B',group:null,phase:'r32',stadium:'Estadio Los Ángeles'},
-  {id:102,date:'2026-06-29',blzH:11,blzM:0, home:'1°C',away:'2°F',group:null,phase:'r32',stadium:'Estadio Houston'},
-  {id:103,date:'2026-06-29',blzH:14,blzM:30,home:'1°E',away:'3°ABCDF',group:null,phase:'r32',stadium:'Estadio Boston'},
-  {id:104,date:'2026-06-29',blzH:19,blzM:0, home:'1°F',away:'2°C',group:null,phase:'r32',stadium:'Estadio Monterrey'},
-  {id:105,date:'2026-06-30',blzH:11,blzM:0, home:'2°E',away:'2°I',group:null,phase:'r32',stadium:'Estadio Dallas'},
-  {id:106,date:'2026-06-30',blzH:15,blzM:0, home:'1°I',away:'3°CDFGH',group:null,phase:'r32',stadium:'Estadio Nueva York/Nueva Jersey'},
-  {id:107,date:'2026-06-30',blzH:19,blzM:0, home:'1°A',away:'3°CEFHI',group:null,phase:'r32',stadium:'Estadio Ciudad de México'},
+  {id:101,date:'2026-06-28',blzH:13,blzM:0, home:'1°A',away:'3°CEFHI',group:null,phase:'r32',stadium:'Estadio Los Ángeles'},
+  {id:102,date:'2026-06-29',blzH:11,blzM:0, home:'1°E',away:'3°ABCDF',group:null,phase:'r32',stadium:'Estadio Houston'},
+  {id:103,date:'2026-06-29',blzH:14,blzM:30,home:'1°I',away:'3°CDFGH',group:null,phase:'r32',stadium:'Estadio Boston'},
+  {id:104,date:'2026-06-29',blzH:19,blzM:0, home:'2°C',away:'2°F',group:null,phase:'r32',stadium:'Estadio Monterrey'},
+  {id:105,date:'2026-06-30',blzH:11,blzM:0, home:'1°C',away:'3°FGHIJ',group:null,phase:'r32',stadium:'Estadio Dallas'},
+  {id:106,date:'2026-06-30',blzH:15,blzM:0, home:'2°E',away:'2°I',group:null,phase:'r32',stadium:'Estadio Nueva York/Nueva Jersey'},
+  {id:107,date:'2026-06-30',blzH:19,blzM:0, home:'1°G',away:'3°AEHIJ',group:null,phase:'r32',stadium:'Estadio Ciudad de México'},
   {id:108,date:'2026-07-01',blzH:10,blzM:0, home:'1°L',away:'3°EHIJK',group:null,phase:'r32',stadium:'Estadio Atlanta'},
-  {id:109,date:'2026-07-01',blzH:14,blzM:0, home:'1°G',away:'3°AEHIJ',group:null,phase:'r32',stadium:'Estadio Seattle'},
-  {id:110,date:'2026-07-01',blzH:18,blzM:0, home:'1°D',away:'3°BEFIJ',group:null,phase:'r32',stadium:'Estadio San Francisco'},
+  {id:109,date:'2026-07-01',blzH:14,blzM:0, home:'1°D',away:'3°BEFIJ',group:null,phase:'r32',stadium:'Estadio Seattle'},
+  {id:110,date:'2026-07-01',blzH:18,blzM:0, home:'2°A',away:'2°B',group:null,phase:'r32',stadium:'Estadio San Francisco'},
   {id:111,date:'2026-07-02',blzH:13,blzM:0, home:'1°H',away:'2°J',group:null,phase:'r32',stadium:'Estadio Los Ángeles'},
-  {id:112,date:'2026-07-02',blzH:17,blzM:0, home:'2°K',away:'2°L',group:null,phase:'r32',stadium:'Estadio Toronto'},
-  {id:113,date:'2026-07-02',blzH:21,blzM:0, home:'1°B',away:'3°EFGIJ',group:null,phase:'r32',stadium:'Estadio BC Place Vancouver'},
-  {id:114,date:'2026-07-03',blzH:12,blzM:0, home:'2°D',away:'2°G',group:null,phase:'r32',stadium:'Estadio Dallas'},
-  {id:115,date:'2026-07-03',blzH:16,blzM:0, home:'1°J',away:'2°H',group:null,phase:'r32',stadium:'Estadio Miami'},
-  {id:116,date:'2026-07-03',blzH:19,blzM:30,home:'1°K',away:'3°DEIJL',group:null,phase:'r32',stadium:'Estadio Kansas City'},
+  {id:112,date:'2026-07-02',blzH:17,blzM:0, home:'1°J',away:'3°HIKL',group:null,phase:'r32',stadium:'Estadio Toronto'},
+  {id:113,date:'2026-07-02',blzH:21,blzM:0, home:'2°B',away:'2°G',group:null,phase:'r32',stadium:'Estadio BC Place Vancouver'},
+  {id:114,date:'2026-07-03',blzH:12,blzM:0, home:'1°F',away:'2°C',group:null,phase:'r32',stadium:'Estadio Dallas'},
+  {id:115,date:'2026-07-03',blzH:16,blzM:0, home:'1°K',away:'3°CDEIL',group:null,phase:'r32',stadium:'Estadio Miami'},
+  {id:116,date:'2026-07-03',blzH:19,blzM:30,home:'2°K',away:'2°L',group:null,phase:'r32',stadium:'Estadio Kansas City'},
   {id:201,date:'2026-07-04',blzH:11,blzM:0, home:'Gan. R32-1',away:'Gan. R32-2',group:null,phase:'r16',stadium:'Estadio Houston'},
   {id:202,date:'2026-07-04',blzH:15,blzM:0, home:'Gan. R32-3',away:'Gan. R32-4',group:null,phase:'r16',stadium:'Estadio Filadelfia'},
   {id:203,date:'2026-07-05',blzH:14,blzM:0, home:'Gan. R32-5',away:'Gan. R32-6',group:null,phase:'r16',stadium:'Estadio Nueva York/Nueva Jersey'},
@@ -433,10 +435,18 @@ function renderGroups(){
 // ============================================================
 // LLAVE DEL TORNEO — dinámica, basada en RESULTS reales
 // ============================================================
+function isGroupComplete(letter){
+  const matches=MATCHES.filter(m=>m.phase==='group'&&m.group===letter);
+  return matches.every(m=>{
+    const r=RESULTS[String(m.id)];
+    return r && r.home!=='' && r.away!=='' && !isNaN(parseInt(r.home)) && !isNaN(parseInt(r.away));
+  });
+}
 function resolveLabel(label, st, best8, used){
   let m=label.match(/^([12])°([A-L])$/);
   if(m){
     const pos=parseInt(m[1])-1, g=m[2];
+    if(!isGroupComplete(g)) return null;
     return (st[g] && st[g][pos]) ? st[g][pos].code : null;
   }
   m=label.match(/^3°([A-L]+)$/);
@@ -469,12 +479,14 @@ function scoreOf(matchId){
 function bracketCell(code, label, score, isHome){
   if(code){
     const tm=getTeam(code);
-    return '<div class="bracket-team"><span>'+tm.flag+' '+tm.name+'</span><span class="bracket-score">'+(score?(isHome?score.home:score.away):'—')+'</span></div>';
+    const origin=label?'<span class="bracket-origin">'+label+'</span>':'';
+    return '<div class="bracket-team"><span>'+tm.flag+' '+tm.name+' '+origin+'</span><span class="bracket-score">'+(score?(isHome?score.home:score.away):'—')+'</span></div>';
   }
   return '<div class="bracket-team tbd"><span>'+(label||'Por definir')+'</span><span class="bracket-score">—</span></div>';
 }
-function pairHtml(homeCode,homeLabel,awayCode,awayLabel,score){
+function pairHtml(homeCode,homeLabel,awayCode,awayLabel,score,matchNum){
   return '<div class="bracket-match">'+
+    (matchNum?'<div class="bracket-num">'+matchNum+'</div>':'')+
     bracketCell(homeCode, homeLabel, score, true)+
     bracketCell(awayCode, awayLabel, score, false)+
     '</div>';
@@ -485,7 +497,7 @@ function renderBracket(){
   const stKey={};
   GROUPS.forEach(g=>{ stKey[g.letter]=st[g.letter]; });
 
-  let thirds=GROUPS.map(g=>{
+  let thirds=GROUPS.filter(g=>isGroupComplete(g.letter)).map(g=>{
     const t3=st[g.letter][2];
     return {code:t3.code, group:g.letter, pts:t3.pts, gf:t3.gf, ga:t3.ga};
   });
@@ -525,19 +537,19 @@ function renderBracket(){
 
   const html=
     '<div class="bracket-round"><div class="round-header">Ronda 32</div><div class="bracket-matches">'+
-      r32.map(m=>pairHtml(m.homeCode,m.homeLabel,m.awayCode,m.awayLabel,m.score)).join('')+
+      r32.map((m,i)=>pairHtml(m.homeCode,m.homeLabel,m.awayCode,m.awayLabel,m.score,'R32-'+(i+1))).join('')+
     '</div></div>'+
     '<div class="bracket-round"><div class="round-header">Octavos</div><div class="bracket-matches">'+
-      r16.map(m=>pairHtml(m.homeCode,'Por definir',m.awayCode,'Por definir',m.score)).join('')+
+      r16.map((m,i)=>pairHtml(m.homeCode,'Gan. R32-'+(2*i+1),m.awayCode,'Gan. R32-'+(2*i+2),m.score,'Oct-'+(i+1))).join('')+
     '</div></div>'+
     '<div class="bracket-round"><div class="round-header">Cuartos</div><div class="bracket-matches">'+
-      qf.map(m=>pairHtml(m.homeCode,'Por definir',m.awayCode,'Por definir',m.score)).join('')+
+      qf.map((m,i)=>pairHtml(m.homeCode,'Gan. Oct-'+(2*i+1),m.awayCode,'Gan. Oct-'+(2*i+2),m.score,'CF-'+(i+1))).join('')+
     '</div></div>'+
     '<div class="bracket-round"><div class="round-header">Semis</div><div class="bracket-matches">'+
-      sf.map(m=>pairHtml(m.homeCode,'Por definir',m.awayCode,'Por definir',m.score)).join('')+
+      sf.map((m,i)=>pairHtml(m.homeCode,'Gan. CF-'+(2*i+1),m.awayCode,'Gan. CF-'+(2*i+2),m.score,'SF-'+(i+1))).join('')+
     '</div></div>'+
     '<div class="bracket-round"><div class="round-header">Final</div><div class="bracket-matches">'+
-      pairHtml(finalHome,'Finalista 1',finalAway,'Finalista 2',finalScore)+
+      pairHtml(finalHome,'Gan. SF-1',finalAway,'Gan. SF-2',finalScore,'FINAL')+
     '</div></div>';
 
   document.getElementById('bracket-view').innerHTML=html;
