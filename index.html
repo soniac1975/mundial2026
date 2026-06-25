@@ -497,11 +497,15 @@ function renderBracket(){
   const stKey={};
   GROUPS.forEach(g=>{ stKey[g.letter]=st[g.letter]; });
 
-  let thirds=GROUPS.filter(g=>isGroupComplete(g.letter)).map(g=>{
-    const t3=st[g.letter][2];
-    return {code:t3.code, group:g.letter, pts:t3.pts, gf:t3.gf, ga:t3.ga};
-  });
-  thirds.sort((a,b)=> b.pts-a.pts || (b.gf-b.ga)-(a.gf-a.ga) || b.gf-a.gf);
+  const allGroupsComplete=GROUPS.every(g=>isGroupComplete(g.letter));
+  let thirds=[];
+  if(allGroupsComplete){
+    thirds=GROUPS.map(g=>{
+      const t3=st[g.letter][2];
+      return {code:t3.code, group:g.letter, pts:t3.pts, gf:t3.gf, ga:t3.ga};
+    });
+    thirds.sort((a,b)=> b.pts-a.pts || (b.gf-b.ga)-(a.gf-a.ga) || b.gf-a.gf);
+  }
   const best8=thirds.slice(0,8);
   const used=new Set();
 
