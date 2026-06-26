@@ -542,6 +542,10 @@ function computeKnockoutResolution(){
     return {id:m.id, homeCode, awayCode, score:scoreOf(m.id)};
   });
   const sfWinners=sf.map(m=>winnerOf(m.id,m.homeCode,m.awayCode));
+  const sfLosers=sf.map(m=>loserOf(m.id,m.homeCode,m.awayCode));
+
+  const thirdM=MATCHES.find(m=>m.phase==='3rd');
+  if(thirdM){ map[thirdM.id]={homeCode:sfLosers[0],awayCode:sfLosers[1]}; }
 
   const finalM=MATCHES.find(m=>m.phase==='final');
   const finalHome=sfWinners[0], finalAway=sfWinners[1];
@@ -691,3 +695,4 @@ renderGroups();renderBracket();sincronizarResultados();
 </script>
 </body>
 </html>
+
