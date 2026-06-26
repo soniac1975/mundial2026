@@ -49,6 +49,8 @@ nav{background:var(--dark2);border-bottom:1px solid var(--border);position:stick
 .bracket-team:first-child{border-bottom:1px solid var(--border2);}
 .bracket-team.tbd{color:var(--text3);font-style:italic;}
 .bracket-score{font-weight:700;font-size:14px;min-width:20px;text-align:center;}
+.bracket-score-input{width:30px;height:26px;text-align:center;background:var(--dark3);border:1px solid var(--border);color:var(--text);border-radius:5px;font-size:13px;font-weight:700;font-family:'Inter',sans-serif;}
+.bracket-score-input:focus{outline:none;border-color:var(--gold);}
 .bracket-origin{font-size:10px;color:var(--text3);font-weight:600;margin-left:4px;}
 .bracket-num{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--gold);text-align:center;padding:3px 0;background:rgba(201,168,76,0.08);border-bottom:1px solid var(--border2);}
 .schedule-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
@@ -476,19 +478,21 @@ function scoreOf(matchId){
   const r=RESULTS[String(matchId)];
   return (r&&r.home!==''&&r.away!=='') ? r : null;
 }
-function bracketCell(code, label, score, isHome){
+function bracketCell(code, label, score, isHome, matchId){
   if(code){
     const tm=getTeam(code);
     const origin=label?'<span class="bracket-origin">'+label+'</span>':'';
-    return '<div class="bracket-team"><span>'+tm.flag+' '+tm.name+' '+origin+'</span><span class="bracket-score">'+(score?(isHome?score.home:score.away):'—')+'</span></div>';
+    const val=score?(isHome?score.home:score.away):'';
+    const inputId='score-'+(isHome?'h':'a')+'-'+matchId;
+    return '<div class="bracket-team"><span>'+tm.flag+' '+tm.name+' '+origin+'</span><input type="number" min="0" max="20" class="bracket-score-input" value="'+val+'" id="'+inputId+'" onchange="saveResult('+matchId+')" placeholder="—"></div>';
   }
   return '<div class="bracket-team tbd"><span>'+(label||'Por definir')+'</span><span class="bracket-score">—</span></div>';
 }
-function pairHtml(homeCode,homeLabel,awayCode,awayLabel,score,matchNum){
+function pairHtml(homeCode,homeLabel,awayCode,awayLabel,score,matchNum,matchId){
   return '<div class="bracket-match">'+
     (matchNum?'<div class="bracket-num">'+matchNum+'</div>':'')+
-    bracketCell(homeCode, homeLabel, score, true)+
-    bracketCell(awayCode, awayLabel, score, false)+
+    bracketCell(homeCode, homeLabel, score, true, matchId)+
+    bracketCell(awayCode, awayLabel, score, false, matchId)+
     '</div>';
 }
 
@@ -552,19 +556,19 @@ function renderBracket(){
 
   const html=
     '<div class="bracket-round"><div class="round-header">Ronda 32</div><div class="bracket-matches">'+
-      r32.map((m,i)=>pairHtml(m.homeCode,m.homeLabel,m.awayCode,m.awayLabel,m.score,'R32-'+(i+1))).join('')+
+      r32.map((m,i)=>pairHtml(m.homeCode,m.homeLabel,m.awayCode,m.awayLabel,m.score,'R32-'+(i+1),m.id)).join('')+
     '</div></div>'+
     '<div class="bracket-round"><div class="round-header">Octavos</div><div class="bracket-matches">'+
-      r16.map((m,i)=>pairHtml(m.homeCode,'Gan. R32-'+(2*i+1),m.awayCode,'Gan. R32-'+(2*i+2),m.score,'Oct-'+(i+1))).join('')+
+      r16.map((m,i)=>pairHtml(m.homeCode,'Gan. R32-'+(2*i+1),m.awayCode,'Gan. R32-'+(2*i+2),m.score,'Oct-'+(i+1),m.id)).join('')+
     '</div></div>'+
     '<div class="bracket-round"><div class="round-header">Cuartos</div><div class="bracket-matches">'+
-      qf.map((m,i)=>pairHtml(m.homeCode,'Gan. Oct-'+(2*i+1),m.awayCode,'Gan. Oct-'+(2*i+2),m.score,'CF-'+(i+1))).join('')+
+      qf.map((m,i)=>pairHtml(m.homeCode,'Gan. Oct-'+(2*i+1),m.awayCode,'Gan. Oct-'+(2*i+2),m.score,'CF-'+(i+1),m.id)).join('')+
     '</div></div>'+
     '<div class="bracket-round"><div class="round-header">Semis</div><div class="bracket-matches">'+
-      sf.map((m,i)=>pairHtml(m.homeCode,'Gan. CF-'+(2*i+1),m.awayCode,'Gan. CF-'+(2*i+2),m.score,'SF-'+(i+1))).join('')+
+      sf.map((m,i)=>pairHtml(m.homeCode,'Gan. CF-'+(2*i+1),m.awayCode,'Gan. CF-'+(2*i+2),m.score,'SF-'+(i+1),m.id)).join('')+
     '</div></div>'+
     '<div class="bracket-round"><div class="round-header">Final</div><div class="bracket-matches">'+
-      pairHtml(finalHome,'Gan. SF-1',finalAway,'Gan. SF-2',finalScore,'FINAL')+
+      pairHtml(finalHome,'Gan. SF-1',finalAway,'Gan. SF-2',finalScore,'FINAL',MATCHES.find(m=>m.phase==='final').id)+
     '</div></div>';
 
   document.getElementById('bracket-view').innerHTML=html;
