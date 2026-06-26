@@ -492,7 +492,7 @@ function pairHtml(homeCode,homeLabel,awayCode,awayLabel,score,matchNum){
     '</div>';
 }
 
-function renderBracket(){
+function computeKnockoutResolution(){
   const st=calcStandings();
   const stKey={};
   GROUPS.forEach(g=>{ stKey[g.letter]=st[g.letter]; });
@@ -508,36 +508,47 @@ function renderBracket(){
   }
   const best8=thirds.slice(0,8);
   const used=new Set();
+  const map={};
 
   const r32=MATCHES.filter(m=>m.phase==='r32').sort((a,b)=>a.id-b.id).map(m=>{
     const homeCode=resolveLabel(m.home, stKey, best8, used);
     const awayCode=resolveLabel(m.away, stKey, best8, used);
+    map[m.id]={homeCode,awayCode};
     return {id:m.id, homeLabel:m.home, awayLabel:m.away, homeCode, awayCode, score:scoreOf(m.id)};
   });
   const r32Winners=r32.map(m=>winnerOf(m.id,m.homeCode,m.awayCode));
 
   const r16=MATCHES.filter(m=>m.phase==='r16').sort((a,b)=>a.id-b.id).map((m,i)=>{
     const homeCode=r32Winners[2*i], awayCode=r32Winners[2*i+1];
+    map[m.id]={homeCode,awayCode};
     return {id:m.id, homeCode, awayCode, score:scoreOf(m.id)};
   });
   const r16Winners=r16.map(m=>winnerOf(m.id,m.homeCode,m.awayCode));
 
   const qf=MATCHES.filter(m=>m.phase==='qf').sort((a,b)=>a.id-b.id).map((m,i)=>{
     const homeCode=r16Winners[2*i], awayCode=r16Winners[2*i+1];
+    map[m.id]={homeCode,awayCode};
     return {id:m.id, homeCode, awayCode, score:scoreOf(m.id)};
   });
   const qfWinners=qf.map(m=>winnerOf(m.id,m.homeCode,m.awayCode));
 
   const sf=MATCHES.filter(m=>m.phase==='sf').sort((a,b)=>a.id-b.id).map((m,i)=>{
     const homeCode=qfWinners[2*i], awayCode=qfWinners[2*i+1];
+    map[m.id]={homeCode,awayCode};
     return {id:m.id, homeCode, awayCode, score:scoreOf(m.id)};
   });
   const sfWinners=sf.map(m=>winnerOf(m.id,m.homeCode,m.awayCode));
-  const sfLosers=sf.map(m=>loserOf(m.id,m.homeCode,m.awayCode));
 
   const finalM=MATCHES.find(m=>m.phase==='final');
   const finalHome=sfWinners[0], finalAway=sfWinners[1];
-  const finalScore=scoreOf(finalM.id);
+  map[finalM.id]={homeCode:finalHome,awayCode:finalAway};
+
+  return {map, r32, r16, qf, sf, finalHome, finalAway, finalScore:scoreOf(finalM.id)};
+}
+
+function renderBracket(){
+  const res=computeKnockoutResolution();
+  const {r32, r16, qf, sf, finalHome, finalAway, finalScore}=res;
 
   const html=
     '<div class="bracket-round"><div class="round-header">Ronda 32</div><div class="bracket-matches">'+
@@ -566,6 +577,8 @@ function renderSchedule(filter){
   const blzNow=new Date(blzMs);
   const today=blzNow.getUTCFullYear()+'-'+String(blzNow.getUTCMonth()+1).padStart(2,'0')+'-'+String(blzNow.getUTCDate()).padStart(2,'0');
 
+  const koMap=computeKnockoutResolution().map;
+
   let matches=MATCHES.filter(m=>{
     if(filter==='today')return m.date===today;
     if(filter==='group')return m.phase==='group';
@@ -579,7 +592,14 @@ function renderSchedule(filter){
   container.innerHTML=Object.keys(byDate).sort().map(date=>
     '<div class="day-block"><div class="day-label"><span>'+new Date(date+'T12:00:00').toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'}).toUpperCase()+'</span></div>'+
     byDate[date].map(m=>{
-      const home=getTeam(m.home),away=getTeam(m.away);
+      let homeCode=m.home, awayCode=m.away;
+      if(m.phase!=='group'){
+        const resolved=koMap[m.id]||{};
+        homeCode=resolved.homeCode||null;
+        awayCode=resolved.awayCode||null;
+      }
+      const home=homeCode?getTeam(homeCode):{flag:'🏴',name:'Por definir'};
+      const away=awayCode?getTeam(awayCode):{flag:'🏴',name:'Por definir'};
       const r=RESULTS[String(m.id)];const hasResult=r&&r.home!==''&&r.away!=='';
       return '<div class="match-card"><div class="match-times">'+
         '<div class="time-row"><span class="time-tz">🇨🇴 COL</span><span class="time-val">'+colStr(m)+'</span></div>'+
