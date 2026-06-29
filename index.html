@@ -372,14 +372,14 @@ const MATCHES=[
   {id:114,date:'2026-07-03',blzH:13,blzM:0, home:'2°D',away:'2°G',group:null,phase:'r32',stadium:'Estadio Dallas'},
   {id:115,date:'2026-07-03',blzH:17,blzM:0, home:'1°J',away:'2°H',group:null,phase:'r32',stadium:'Estadio Miami'},
   {id:116,date:'2026-07-03',blzH:20,blzM:30,home:'1°K',away:'3°L',group:null,phase:'r32',stadium:'Estadio Kansas City'},
-  {id:201,date:'2026-07-04',blzH:11,blzM:0, home:'Gan. R32-1',away:'Gan. R32-2',group:null,phase:'r16',stadium:'Estadio Houston'},
-  {id:202,date:'2026-07-04',blzH:15,blzM:0, home:'Gan. R32-3',away:'Gan. R32-4',group:null,phase:'r16',stadium:'Estadio Filadelfia'},
-  {id:203,date:'2026-07-05',blzH:14,blzM:0, home:'Gan. R32-5',away:'Gan. R32-6',group:null,phase:'r16',stadium:'Estadio Nueva York/Nueva Jersey'},
+  {id:201,date:'2026-07-04',blzH:11,blzM:0, home:'Gan. R32-1',away:'Gan. R32-4',group:null,phase:'r16',stadium:'Estadio Houston'},
+  {id:202,date:'2026-07-04',blzH:15,blzM:0, home:'Gan. R32-3',away:'Gan. R32-6',group:null,phase:'r16',stadium:'Estadio Filadelfia'},
+  {id:203,date:'2026-07-05',blzH:14,blzM:0, home:'Gan. R32-2',away:'Gan. R32-5',group:null,phase:'r16',stadium:'Estadio Nueva York/Nueva Jersey'},
   {id:204,date:'2026-07-05',blzH:18,blzM:0, home:'Gan. R32-7',away:'Gan. R32-8',group:null,phase:'r16',stadium:'Estadio Ciudad de México'},
-  {id:205,date:'2026-07-06',blzH:13,blzM:0, home:'Gan. R32-9',away:'Gan. R32-10',group:null,phase:'r16',stadium:'Estadio Dallas'},
-  {id:206,date:'2026-07-06',blzH:18,blzM:0, home:'Gan. R32-11',away:'Gan. R32-12',group:null,phase:'r16',stadium:'Estadio Seattle'},
-  {id:207,date:'2026-07-07',blzH:10,blzM:0, home:'Gan. R32-13',away:'Gan. R32-14',group:null,phase:'r16',stadium:'Estadio Atlanta'},
-  {id:208,date:'2026-07-07',blzH:14,blzM:0, home:'Gan. R32-15',away:'Gan. R32-16',group:null,phase:'r16',stadium:'Estadio BC Place Vancouver'},
+  {id:205,date:'2026-07-06',blzH:13,blzM:0, home:'Gan. R32-12',away:'Gan. R32-11',group:null,phase:'r16',stadium:'Estadio Dallas'},
+  {id:206,date:'2026-07-06',blzH:18,blzM:0, home:'Gan. R32-10',away:'Gan. R32-9',group:null,phase:'r16',stadium:'Estadio Seattle'},
+  {id:207,date:'2026-07-07',blzH:10,blzM:0, home:'Gan. R32-15',away:'Gan. R32-14',group:null,phase:'r16',stadium:'Estadio Atlanta'},
+  {id:208,date:'2026-07-07',blzH:14,blzM:0, home:'Gan. R32-13',away:'Gan. R32-16',group:null,phase:'r16',stadium:'Estadio BC Place Vancouver'},
   {id:301,date:'2026-07-09',blzH:14,blzM:0, home:'Gan. Oct-1',away:'Gan. Oct-2',group:null,phase:'qf',stadium:'Estadio Boston'},
   {id:302,date:'2026-07-10',blzH:13,blzM:0, home:'Gan. Oct-3',away:'Gan. Oct-4',group:null,phase:'qf',stadium:'Estadio Los Ángeles'},
   {id:303,date:'2026-07-11',blzH:15,blzM:0, home:'Gan. Oct-5',away:'Gan. Oct-6',group:null,phase:'qf',stadium:'Estadio Miami'},
@@ -522,10 +522,14 @@ function computeKnockoutResolution(){
   });
   const r32Winners=r32.map(m=>winnerOf(m.id,m.homeCode,m.awayCode));
 
+  // Cruce oficial FIFA de octavos (matches 89-96). Cada octavo enfrenta a 2 ganadores
+  // de R32 segun el bracket real (NO secuencial). Indices = ganadores R32 en orden id 101..116.
+  const R16_FEEDERS=[[0,3],[2,5],[1,4],[6,7],[11,10],[9,8],[14,13],[12,15]];
   const r16=MATCHES.filter(m=>m.phase==='r16').sort((a,b)=>a.id-b.id).map((m,i)=>{
-    const homeCode=r32Winners[2*i], awayCode=r32Winners[2*i+1];
+    const fh=R16_FEEDERS[i][0], fa=R16_FEEDERS[i][1];
+    const homeCode=r32Winners[fh], awayCode=r32Winners[fa];
     map[m.id]={homeCode,awayCode};
-    return {id:m.id, homeCode, awayCode, score:scoreOf(m.id)};
+    return {id:m.id, homeCode, awayCode, homeLabel:'Gan. R32-'+(fh+1), awayLabel:'Gan. R32-'+(fa+1), score:scoreOf(m.id)};
   });
   const r16Winners=r16.map(m=>winnerOf(m.id,m.homeCode,m.awayCode));
 
@@ -563,7 +567,7 @@ function renderBracket(){
       r32.map((m,i)=>pairHtml(m.homeCode,m.homeLabel,m.awayCode,m.awayLabel,m.score,'R32-'+(i+1),m.id)).join('')+
     '</div></div>'+
     '<div class="bracket-round"><div class="round-header">Octavos</div><div class="bracket-matches">'+
-      r16.map((m,i)=>pairHtml(m.homeCode,'Gan. R32-'+(2*i+1),m.awayCode,'Gan. R32-'+(2*i+2),m.score,'Oct-'+(i+1),m.id)).join('')+
+      r16.map((m,i)=>pairHtml(m.homeCode,m.homeLabel,m.awayCode,m.awayLabel,m.score,'Oct-'+(i+1),m.id)).join('')+
     '</div></div>'+
     '<div class="bracket-round"><div class="round-header">Cuartos</div><div class="bracket-matches">'+
       qf.map((m,i)=>pairHtml(m.homeCode,'Gan. Oct-'+(2*i+1),m.awayCode,'Gan. Oct-'+(2*i+2),m.score,'CF-'+(i+1),m.id)).join('')+
