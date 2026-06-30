@@ -53,6 +53,9 @@ nav{background:var(--dark2);border-bottom:1px solid var(--border);position:stick
 .bracket-score-input:focus{outline:none;border-color:var(--gold);}
 .bracket-origin{font-size:10px;color:var(--text3);font-weight:600;margin-left:4px;}
 .bracket-num{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--gold);text-align:center;padding:3px 0;background:rgba(201,168,76,0.08);border-bottom:1px solid var(--border2);}
+.bracket-time{padding:5px 4px;border-top:1px solid var(--border2);text-align:center;line-height:1.5;background:rgba(255,255,255,0.02);}
+.bracket-time .bt-date{display:block;font-size:9px;font-weight:700;color:var(--text2);text-transform:capitalize;}
+.bracket-time .bt-zones{display:block;font-size:9px;color:var(--text3);}
 .schedule-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
 .filter-btn{padding:7px 16px;border-radius:20px;border:1px solid var(--border2);background:var(--surface);color:var(--text2);cursor:pointer;font-size:13px;transition:all 0.2s;font-family:'Inter',sans-serif;}
 .filter-btn:hover{border-color:var(--gold);color:var(--gold);}
@@ -357,21 +360,21 @@ const MATCHES=[
   {id:71,date:'2026-06-27',blzH:20,blzM:0, home:'ALG',away:'AUT',group:'J',phase:'group',stadium:'Estadio Kansas City'},
   {id:72,date:'2026-06-27',blzH:20,blzM:0, home:'JOR',away:'ARG',group:'J',phase:'group',stadium:'Estadio Dallas'},
   {id:101,date:'2026-06-28',blzH:13,blzM:0, home:'2°A',away:'2°B',group:null,phase:'r32',stadium:'Estadio Los Ángeles'},
-  {id:102,date:'2026-06-29',blzH:12,blzM:0, home:'1°C',away:'2°F',group:null,phase:'r32',stadium:'Estadio Houston'},
-  {id:103,date:'2026-06-29',blzH:15,blzM:30,home:'1°E',away:'3°D',group:null,phase:'r32',stadium:'Estadio Boston'},
-  {id:104,date:'2026-06-29',blzH:20,blzM:0, home:'1°F',away:'2°C',group:null,phase:'r32',stadium:'Estadio Monterrey'},
-  {id:105,date:'2026-06-30',blzH:12,blzM:0, home:'2°E',away:'2°I',group:null,phase:'r32',stadium:'Estadio Dallas'},
-  {id:106,date:'2026-06-30',blzH:16,blzM:0, home:'1°I',away:'3°F',group:null,phase:'r32',stadium:'Estadio Nueva York/Nueva Jersey'},
-  {id:107,date:'2026-06-30',blzH:20,blzM:0, home:'1°A',away:'3°E',group:null,phase:'r32',stadium:'Estadio Ciudad de México'},
-  {id:108,date:'2026-07-01',blzH:11,blzM:0, home:'1°L',away:'3°K',group:null,phase:'r32',stadium:'Estadio Atlanta'},
-  {id:109,date:'2026-07-01',blzH:15,blzM:0, home:'1°G',away:'3°I',group:null,phase:'r32',stadium:'Estadio Seattle'},
-  {id:110,date:'2026-07-01',blzH:19,blzM:0, home:'1°D',away:'3°B',group:null,phase:'r32',stadium:'Estadio San Francisco'},
-  {id:111,date:'2026-07-02',blzH:14,blzM:0, home:'1°H',away:'2°J',group:null,phase:'r32',stadium:'Estadio Los Ángeles'},
-  {id:112,date:'2026-07-02',blzH:18,blzM:0, home:'2°K',away:'2°L',group:null,phase:'r32',stadium:'Estadio Toronto'},
-  {id:113,date:'2026-07-02',blzH:22,blzM:0, home:'1°B',away:'3°J',group:null,phase:'r32',stadium:'Estadio BC Place Vancouver'},
-  {id:114,date:'2026-07-03',blzH:13,blzM:0, home:'2°D',away:'2°G',group:null,phase:'r32',stadium:'Estadio Dallas'},
-  {id:115,date:'2026-07-03',blzH:17,blzM:0, home:'1°J',away:'2°H',group:null,phase:'r32',stadium:'Estadio Miami'},
-  {id:116,date:'2026-07-03',blzH:20,blzM:30,home:'1°K',away:'3°L',group:null,phase:'r32',stadium:'Estadio Kansas City'},
+  {id:102,date:'2026-06-29',blzH:11,blzM:0, home:'1°C',away:'2°F',group:null,phase:'r32',stadium:'Estadio Houston'},
+  {id:103,date:'2026-06-29',blzH:14,blzM:30,home:'1°E',away:'3°D',group:null,phase:'r32',stadium:'Estadio Boston'},
+  {id:104,date:'2026-06-29',blzH:19,blzM:0, home:'1°F',away:'2°C',group:null,phase:'r32',stadium:'Estadio Monterrey'},
+  {id:105,date:'2026-06-30',blzH:11,blzM:0, home:'2°E',away:'2°I',group:null,phase:'r32',stadium:'Estadio Dallas'},
+  {id:106,date:'2026-06-30',blzH:15,blzM:0, home:'1°I',away:'3°F',group:null,phase:'r32',stadium:'Estadio Nueva York/Nueva Jersey'},
+  {id:107,date:'2026-06-30',blzH:19,blzM:0, home:'1°A',away:'3°E',group:null,phase:'r32',stadium:'Estadio Ciudad de México'},
+  {id:108,date:'2026-07-01',blzH:10,blzM:0, home:'1°L',away:'3°K',group:null,phase:'r32',stadium:'Estadio Atlanta'},
+  {id:109,date:'2026-07-01',blzH:14,blzM:0, home:'1°G',away:'3°I',group:null,phase:'r32',stadium:'Estadio Seattle'},
+  {id:110,date:'2026-07-01',blzH:18,blzM:0, home:'1°D',away:'3°B',group:null,phase:'r32',stadium:'Estadio San Francisco'},
+  {id:111,date:'2026-07-02',blzH:13,blzM:0, home:'1°H',away:'2°J',group:null,phase:'r32',stadium:'Estadio Los Ángeles'},
+  {id:112,date:'2026-07-02',blzH:17,blzM:0, home:'2°K',away:'2°L',group:null,phase:'r32',stadium:'Estadio Toronto'},
+  {id:113,date:'2026-07-02',blzH:21,blzM:0, home:'1°B',away:'3°J',group:null,phase:'r32',stadium:'Estadio BC Place Vancouver'},
+  {id:114,date:'2026-07-03',blzH:12,blzM:0, home:'2°D',away:'2°G',group:null,phase:'r32',stadium:'Estadio Dallas'},
+  {id:115,date:'2026-07-03',blzH:16,blzM:0, home:'1°J',away:'2°H',group:null,phase:'r32',stadium:'Estadio Miami'},
+  {id:116,date:'2026-07-03',blzH:19,blzM:30,home:'1°K',away:'3°L',group:null,phase:'r32',stadium:'Estadio Kansas City'},
   {id:201,date:'2026-07-04',blzH:11,blzM:0, home:'Gan. R32-1',away:'Gan. R32-4',group:null,phase:'r16',stadium:'Estadio Houston'},
   {id:202,date:'2026-07-04',blzH:15,blzM:0, home:'Gan. R32-3',away:'Gan. R32-6',group:null,phase:'r16',stadium:'Estadio Filadelfia'},
   {id:203,date:'2026-07-05',blzH:14,blzM:0, home:'Gan. R32-2',away:'Gan. R32-5',group:null,phase:'r16',stadium:'Estadio Nueva York/Nueva Jersey'},
@@ -488,11 +491,19 @@ function bracketCell(code, label, score, isHome, matchId){
   }
   return '<div class="bracket-team tbd"><span>'+(label||'Por definir')+'</span><span class="bracket-score">—</span></div>';
 }
+function bracketTimeFooter(matchId){
+  const m=MATCHES.find(x=>String(x.id)===String(matchId));
+  if(!m)return '';
+  const dia=new Date(m.date+'T12:00:00').toLocaleDateString('es-ES',{weekday:'short',day:'numeric',month:'numeric'});
+  return '<div class="bracket-time"><span class="bt-date">'+dia+'</span>'+
+    '<span class="bt-zones">🇨🇴 '+colStr(m)+' · 🇺🇸 '+azStr(m)+' · 🇧🇿 '+blzStr(m)+'</span></div>';
+}
 function pairHtml(homeCode,homeLabel,awayCode,awayLabel,score,matchNum,matchId){
   return '<div class="bracket-match">'+
     (matchNum?'<div class="bracket-num">'+matchNum+'</div>':'')+
     bracketCell(homeCode, homeLabel, score, true, matchId)+
     bracketCell(awayCode, awayLabel, score, false, matchId)+
+    bracketTimeFooter(matchId)+
     '</div>';
 }
 
