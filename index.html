@@ -380,9 +380,9 @@ const MATCHES=[
   {id:206,date:'2026-07-06',blzH:18,blzM:0, home:'Gan. R32-10',away:'Gan. R32-9',group:null,phase:'r16',stadium:'Estadio Seattle'},
   {id:207,date:'2026-07-07',blzH:10,blzM:0, home:'Gan. R32-15',away:'Gan. R32-14',group:null,phase:'r16',stadium:'Estadio Atlanta'},
   {id:208,date:'2026-07-07',blzH:14,blzM:0, home:'Gan. R32-13',away:'Gan. R32-16',group:null,phase:'r16',stadium:'Estadio BC Place Vancouver'},
-  {id:301,date:'2026-07-09',blzH:14,blzM:0, home:'Gan. Oct-1',away:'Gan. Oct-2',group:null,phase:'qf',stadium:'Estadio Boston'},
-  {id:302,date:'2026-07-10',blzH:13,blzM:0, home:'Gan. Oct-3',away:'Gan. Oct-4',group:null,phase:'qf',stadium:'Estadio Los Ángeles'},
-  {id:303,date:'2026-07-11',blzH:15,blzM:0, home:'Gan. Oct-5',away:'Gan. Oct-6',group:null,phase:'qf',stadium:'Estadio Miami'},
+  {id:301,date:'2026-07-09',blzH:14,blzM:0, home:'Gan. Oct-2',away:'Gan. Oct-1',group:null,phase:'qf',stadium:'Estadio Boston'},
+  {id:302,date:'2026-07-10',blzH:13,blzM:0, home:'Gan. Oct-5',away:'Gan. Oct-6',group:null,phase:'qf',stadium:'Estadio Los Ángeles'},
+  {id:303,date:'2026-07-11',blzH:15,blzM:0, home:'Gan. Oct-3',away:'Gan. Oct-4',group:null,phase:'qf',stadium:'Estadio Miami'},
   {id:304,date:'2026-07-11',blzH:19,blzM:0, home:'Gan. Oct-7',away:'Gan. Oct-8',group:null,phase:'qf',stadium:'Estadio Kansas City'},
   {id:401,date:'2026-07-14',blzH:13,blzM:0, home:'Gan. CF-1',away:'Gan. CF-2',group:null,phase:'sf',stadium:'Estadio Dallas'},
   {id:402,date:'2026-07-15',blzH:13,blzM:0, home:'Gan. CF-3',away:'Gan. CF-4',group:null,phase:'sf',stadium:'Estadio Atlanta'},
@@ -533,10 +533,15 @@ function computeKnockoutResolution(){
   });
   const r16Winners=r16.map(m=>winnerOf(m.id,m.homeCode,m.awayCode));
 
+  // Cruce oficial FIFA de cuartos (matches 97-100). r16Winners en orden id 201..208 (Oct-1..Oct-8).
+  // M97 Boston=Oct2vOct1, M98 LA=Oct5vOct6, M99 Miami=Oct3vOct4, M100 KC=Oct7vOct8.
+  // Con esto los ganadores de cuartos quedan ordenados y semis/final/3er puesto resuelven correcto en secuencia.
+  const QF_FEEDERS=[[1,0],[4,5],[2,3],[6,7]];
   const qf=MATCHES.filter(m=>m.phase==='qf').sort((a,b)=>a.id-b.id).map((m,i)=>{
-    const homeCode=r16Winners[2*i], awayCode=r16Winners[2*i+1];
+    const fh=QF_FEEDERS[i][0], fa=QF_FEEDERS[i][1];
+    const homeCode=r16Winners[fh], awayCode=r16Winners[fa];
     map[m.id]={homeCode,awayCode};
-    return {id:m.id, homeCode, awayCode, score:scoreOf(m.id)};
+    return {id:m.id, homeCode, awayCode, homeLabel:'Gan. Oct-'+(fh+1), awayLabel:'Gan. Oct-'+(fa+1), score:scoreOf(m.id)};
   });
   const qfWinners=qf.map(m=>winnerOf(m.id,m.homeCode,m.awayCode));
 
@@ -570,7 +575,7 @@ function renderBracket(){
       r16.map((m,i)=>pairHtml(m.homeCode,m.homeLabel,m.awayCode,m.awayLabel,m.score,'Oct-'+(i+1),m.id)).join('')+
     '</div></div>'+
     '<div class="bracket-round"><div class="round-header">Cuartos</div><div class="bracket-matches">'+
-      qf.map((m,i)=>pairHtml(m.homeCode,'Gan. Oct-'+(2*i+1),m.awayCode,'Gan. Oct-'+(2*i+2),m.score,'CF-'+(i+1),m.id)).join('')+
+      qf.map((m,i)=>pairHtml(m.homeCode,m.homeLabel,m.awayCode,m.awayLabel,m.score,'CF-'+(i+1),m.id)).join('')+
     '</div></div>'+
     '<div class="bracket-round"><div class="round-header">Semis</div><div class="bracket-matches">'+
       sf.map((m,i)=>pairHtml(m.homeCode,'Gan. CF-'+(2*i+1),m.awayCode,'Gan. CF-'+(2*i+2),m.score,'SF-'+(i+1),m.id)).join('')+
